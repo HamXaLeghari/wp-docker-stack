@@ -1,0 +1,98 @@
+version: '3'
+services:
+  wordpress:
+    container_name: wordpress-container
+    build: 
+      context: .
+      dockerfile: wordpress/Dockerfile
+    depends_on:
+      - mariadb
+    networks:
+      - wordpress-net
+    volumes:
+      - wordpress_data:/var/www/html
+    env_file:
+      - ./shared.env
+#   cgroup_parent: wordpress.slice 
+  
+  mariadb:
+    container_name: mariadb-container
+    image: mariadb:latest
+    env_file:
+      - ./shared.env
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - wordpress-net
+
+  nginx:
+    container_name: nginx-container
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - apache2
+    networks:
+      - public-net
+      - wordpress-net
+    volumes:
+      - wordpress_data:/var/www/html
+      - nginx_conf:/etc/nginx
+      - nginx_cache:/var/cache/nginx
+      - letsencrypt_conf:/etc/letsencrypt
+
+#   cgroup_parent: wordpress.slice 
+  
+  apache2:
+    container_name: apache2-container
+    build:
+      context: .
+      dockerfile: apache2/Dockerfile
+    depends_on:
+      - wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+      - apache2_conf:/etc/apache2
+    networks:
+      - wordpress-net
+    
+#    cgroup_parent: wordpress.slice 
+  
+  phpfpm:
+    container_name: phpfpm-container
+    build:
+      context: .
+      dockerfile: php-fpm/Dockerfile
+    
+    depends_on:
+      - apache2
+    networks:
+      - wordpress-net
+      - public-net
+    volumes:
+      - php_conf:/usr/local/etc
+      - wordpress_data:/var/www/html
+    env_file:
+      - ./shared.env
+#   cgroup_parent: wordpress.slice 
+
+networks:
+  wordpress-net:
+    internal: true
+  public-net:
+  
+volumes:
+  wordpress_data:
+  apache2_conf:
+  nginx_conf:
+  mariadb_data:
+  php_conf:
+  nginx_cache:
+  letsencrypt_conf:
+     
+  
+
+    
