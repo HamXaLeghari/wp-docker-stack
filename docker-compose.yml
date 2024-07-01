@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   wordpress:
     container_name: wordpress-container
@@ -24,6 +25,7 @@ services:
       - mariadb_data:/var/lib/mysql
     networks:
       - wordpress-net
+      - flask-net
 
   nginx:
     container_name: nginx-container
@@ -38,11 +40,13 @@ services:
     networks:
       - public-net
       - wordpress-net
+      - flask-net
     volumes:
       - wordpress_data:/var/www/html
       - nginx_conf:/etc/nginx
       - nginx_cache:/var/cache/nginx
       - letsencrypt_conf:/etc/letsencrypt
+      - flask_conf:/var/www/html/flask
 
 #   cgroup_parent: wordpress.slice 
   
@@ -77,12 +81,15 @@ services:
       - wordpress_data:/var/www/html
     env_file:
       - ./shared.env
-#   cgroup_parent: wordpress.slice 
+#   cgroup_parent: wordpress.slice
 
+  
 networks:
   wordpress-net:
     internal: true
   public-net:
+  flask-net:
+   internal: true
   
 volumes:
   wordpress_data:
@@ -92,7 +99,10 @@ volumes:
   php_conf:
   nginx_cache:
   letsencrypt_conf:
+  flask_conf:
+    external: true
+      
      
-  
+ 
 
     

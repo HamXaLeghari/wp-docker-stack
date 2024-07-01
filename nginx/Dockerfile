@@ -7,10 +7,12 @@ COPY ./nginx/nginx.conf /etc/nginx/
 
 COPY ./nginx/default /etc/nginx/sites-available/
 
-RUN mkdir -p /var/cache/nginx
-RUN mkdir -p /etc/letsencrypt/
+COPY ./nginx/flask /etc/nginx/sites-available
 
-RUN chown -R www-data:www-data /var/www/html \
+RUN ln -s /etc/nginx/sites-available/flask /etc/nginx/sites-enabled/flask \
+    && mkdir -p /var/cache/nginx \
+    && mkdir -p /etc/letsencrypt/ \
+    && chown -R www-data:www-data /var/www/html \
     && chown -R www-data:www-data /var/cache/nginx \
     && chown -R www-data:www-data /var/log/nginx \
     && chown -R www-data:www-data /etc/nginx
