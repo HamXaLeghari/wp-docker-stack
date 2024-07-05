@@ -1,11 +1,9 @@
 
 FROM alpine:latest
 
-RUN apk update && apk add shadow
-
-RUN groupmod -g 33 www-data
-
-RUN mkdir -p /var/www/html
+RUN apk update && apk add --no-cache shadow && \ 
+        groupmod -g 33 www-data && \ 
+        mkdir -p /var/www/html
 
 WORKDIR /var/www/html 
 
