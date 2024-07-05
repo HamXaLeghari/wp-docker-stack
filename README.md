@@ -32,7 +32,7 @@ project-root
 
 ## Prerequisites
 
-- **Docker**: Ensure Docker is installed and running on your machine. [Install Docker](https://docs.docker.com/get-docker/)
+- **Docker**: Ensure Docker is installed and running on your machine. [Install Docker](https://docs.docker.com/engine/install/)
 - **Docker CLI**: Familiarity with Docker commands and concepts.
 
 ## Step-by-Step Setup (CLI)
