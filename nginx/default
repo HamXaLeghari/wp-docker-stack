@@ -32,7 +32,7 @@ server {
     root /var/www/html/wordpress;
     index index.php index.html index.htm index.nginx-debian.html;
     
-    Redirect HTTP to HTTPS
+    #Redirect HTTP to HTTPS
     if ( $scheme != "https" ) {
         return 301 https://$host$request_uri;
     }
