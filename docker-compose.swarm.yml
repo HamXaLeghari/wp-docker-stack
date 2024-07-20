@@ -1,10 +1,7 @@
 version: '3'
 services:
   wordpress:
-    container_name: wordpress-container
-    build:
-      context: .
-      dockerfile: wordpress/Dockerfile
+    image: wordpress-project-wordpress:latest 
     depends_on:
       - mariadb
     networks:
@@ -13,10 +10,9 @@ services:
       - wordpress_data:/var/www/html
     env_file:
       - ./shared.env
-#   cgroup_parent: wordpress.slice
-
+#   cgroup_parent: wordpress.slice 
+  
   mariadb:
-    container_name: mariadb-container
     image: mariadb:latest
     env_file:
       - ./shared.env
@@ -24,13 +20,12 @@ services:
       - mariadb_data:/var/lib/mysql
     networks:
       - wordpress-net
-      - flask-net
 
   nginx:
-    container_name: nginx-container
-    build:
-      context: .
-      dockerfile: nginx/Dockerfile
+    deploy:
+     mode: replicated
+     replicas: 2
+    image: wordpress-project-nginx:latest 
     ports:
       - 80:80
       - 443:443
@@ -39,7 +34,6 @@ services:
     networks:
       - public-net
       - wordpress-net
-      - flask-net
     volumes:
       - wordpress_data:/var/www/html
       - nginx_conf:/etc/nginx
@@ -47,29 +41,22 @@ services:
       - letsencrypt_conf:/etc/letsencrypt
       - flask_conf:/var/www/html/flask
 
-#   cgroup_parent: wordpress.slice
-
+#   cgroup_parent: wordpress.slice 
+  
   apache2:
-    container_name: apache2-container
-    build:
-      context: .
-      dockerfile: apache2/Dockerfile
+    image: wordpress-project-apache2:latest 
     depends_on:
-      - wordpress
+      - wordpress 
     volumes:
       - wordpress_data:/var/www/html
       - apache2_conf:/etc/apache2
     networks:
       - wordpress-net
-
-#    cgroup_parent: wordpress.slice
-
+    
+#    cgroup_parent: wordpress.slice 
+  
   phpfpm:
-    container_name: phpfpm-container
-    build:
-      context: .
-      dockerfile: php-fpm/Dockerfile
-
+    image: wordpress-project-phpfpm:latest 
     depends_on:
       - apache2
     networks:
@@ -80,9 +67,7 @@ services:
       - wordpress_data:/var/www/html
     env_file:
       - ./shared.env
-
-#   cgroup_parent: wordpress.slice
-
+#   cgroup_parent: wordpress.slice 
 
 networks:
   wordpress-net:
@@ -90,7 +75,7 @@ networks:
   public-net:
   flask-net:
    external: true
-
+  
 volumes:
   wordpress_data:
   apache2_conf:
@@ -100,4 +85,4 @@ volumes:
   nginx_cache:
   letsencrypt_conf:
   flask_conf:
-    external: true
+   external: true

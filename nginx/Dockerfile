@@ -7,11 +7,14 @@ COPY ./nginx/nginx.conf /etc/nginx/
 
 COPY ./nginx/default /etc/nginx/sites-available/
 
+COPY ./nginx/flask /etc/nginx/sites-available/
+
 RUN mkdir -p /etc/letsencrypt/ \ 
     && mkdir -p /var/cache/nginx \
     && chown -R www-data:www-data /var/www/html \
     && chown -R www-data:www-data /var/cache/nginx \
     && chown -R www-data:www-data /var/log/nginx \
-    && chown -R www-data:www-data /etc/nginx
+    && chown -R www-data:www-data /etc/nginx \
+    && ln -s /etc/nginx/sites-available/flask /etc/nginx/sites-enabled/
 
 ENTRYPOINT [ "nginx", "-g", "daemon off;" ]
